@@ -1,11 +1,13 @@
-import Address from "../../entity/address";
-import CustomerAddressChangedEvent from "../customer/customer-address-changed.event";
-import CustomerCreatedEvent from "../customer/customer-created.event";
-import SendMessageWhenAddressHasChanged from "../customer/handler/send-message-when-address-has-changed.handler";
-import SendMessageWhenCustomerIsCreated from "../customer/handler/send-message-when-customer-is-created.handler";
-import SendEmailWhenProductIsCreatedHandler from "../product/handler/send-email-when-product-is-created.handler";
-import ProductCreatedEvent from "../product/product-created.event";
+import Address from "../../customer/value-object/address";
+import CustomerAddressChangedEvent from "../../customer/event/customer-address-changed.event";
+import CustomerCreatedEvent from "../../customer/event/customer-created.event";
+import SendMessageWhenAddressHasChanged from "../../customer/event/handler/send-message-when-address-has-changed.handler";
+//import SendMessageWhenCustomerIsCreated from "../../customer/event/handler/send-message-one-when-customer-is-created.handler";
+import SendEmailWhenProductIsCreatedHandler from "../../product/event/handler/send-email-when-product-is-created.handler";
+import ProductCreatedEvent from "../../product/event/product-created.event";
 import EventDispatcher from "./event-dispatcher";
+import SendMessageOneWhenCustomerIsCreated from "../../customer/event/handler/send-message-one-when-customer-is-created.handler";
+import SendMessageTwoWhenCustomerIsCreated from "../../customer/event/handler/send-message-two-when-customer-is-created.handler";
 
 describe("Domain events tests", ()=> {
 
@@ -75,7 +77,7 @@ describe("Domain events tests", ()=> {
     it("should register an event Customer Created handler", ()=> {
 
         const eventDispatcher = new EventDispatcher();
-        const eventHandler = new SendMessageWhenCustomerIsCreated();
+        const eventHandler = new SendMessageOneWhenCustomerIsCreated();
 
         eventDispatcher.register("CustomerCreatedEvent", eventHandler);
 
@@ -87,12 +89,18 @@ describe("Domain events tests", ()=> {
 
     it("should notify Customer Created event handler", ()=> {
         const eventDispatcher = new EventDispatcher();
-        const eventHandler = new SendMessageWhenCustomerIsCreated();
-        const spyEventHandler = jest.spyOn(eventHandler, "handle");
+        const eventHandler1 = new SendMessageOneWhenCustomerIsCreated();
+        const spyEventHandler1 = jest.spyOn(eventHandler1, "handle");
 
-        eventDispatcher.register("CustomerCreatedEvent", eventHandler);
+        eventDispatcher.register("CustomerCreatedEvent", eventHandler1);
 
-        expect(eventDispatcher.getEventHandlers["CustomerCreatedEvent"][0]).toMatchObject(eventHandler);
+        const eventHandler2 = new SendMessageTwoWhenCustomerIsCreated();
+        const spyEventHandler2 = jest.spyOn(eventHandler2, "handle");
+
+        eventDispatcher.register("CustomerCreatedEvent", eventHandler2);
+
+        expect(eventDispatcher.getEventHandlers["CustomerCreatedEvent"][0]).toMatchObject(eventHandler1);
+        expect(eventDispatcher.getEventHandlers["CustomerCreatedEvent"][1]).toMatchObject(eventHandler2);
 
         const customerCreatedEvent = new CustomerCreatedEvent({
             name: "Customer 1"
@@ -101,7 +109,8 @@ describe("Domain events tests", ()=> {
         // Notify - Executa o SendMessageWhenCustomerIsCreated.handle
         eventDispatcher.notify(customerCreatedEvent);
 
-        expect(spyEventHandler).toHaveBeenCalled();
+        expect(spyEventHandler1).toHaveBeenCalled();
+        expect(spyEventHandler2).toHaveBeenCalled();
 
     });
 
