@@ -1,13 +1,12 @@
-import Address from "../../customer/value-object/address";
-import CustomerAddressChangedEvent from "../../customer/event/customer-address-changed.event";
-import CustomerCreatedEvent from "../../customer/event/customer-created.event";
-import SendMessageWhenAddressHasChanged from "../../customer/event/handler/send-message-when-address-has-changed.handler";
-//import SendMessageWhenCustomerIsCreated from "../../customer/event/handler/send-message-one-when-customer-is-created.handler";
-import SendEmailWhenProductIsCreatedHandler from "../../product/event/handler/send-email-when-product-is-created.handler";
-import ProductCreatedEvent from "../../product/event/product-created.event";
+import Address from "../../entity/address";
+import CustomerAddressChangedEvent from "../customer/customer-address-changed.event";
+import CustomerCreatedEvent from "../customer/customer-created.event";
+import SendMessageOneWhenCustomerIsCreated from "../customer/handler/send-message-one-when-customer-is-created.handler";
+import SendMessageTwoWhenCustomerIsCreated from "../customer/handler/send-message-two-when-customer-is-created.handler";
+import SendMessageWhenAddressHasChanged from "../customer/handler/send-message-when-address-has-changed.handler";
+import SendEmailWhenProductIsCreatedHandler from "../product/handler/send-email-when-product-is-created.handler";
+import ProductCreatedEvent from "../product/product-created.event";
 import EventDispatcher from "./event-dispatcher";
-import SendMessageOneWhenCustomerIsCreated from "../../customer/event/handler/send-message-one-when-customer-is-created.handler";
-import SendMessageTwoWhenCustomerIsCreated from "../../customer/event/handler/send-message-two-when-customer-is-created.handler";
 
 describe("Domain events tests", ()=> {
 
